@@ -1,5 +1,5 @@
 /*
- * ESPWebFileManager Library
+ * EspWebFileManager Library
  * Copyright (C) 2024 Jobit Joseph
  * Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
  * You may not use this work for commercial purposes. Modifications must credit the original author.
@@ -37,20 +37,26 @@
  * DEALINGS IN THE SOFTWARE.
  *
  * Author: Jobit Joseph
- * Date: 19 December 2024
+ * Date: 01 December 2024
  *
  * For commercial use or licensing requests, please contact [jobitjoseph1@gmail.com].
  */
+//MOdded
+
 #ifndef ESP_WEB_FILE_MANAGER_H
 #define ESP_WEB_FILE_MANAGER_H
+#include <FS.h>
 
+#ifdef ESP32
 #include <AsyncTCP.h>
+#endif
 #include <ESPAsyncWebServer.h>
-// Define file system types
-#define FS_SPIFFS 1
-#define FS_SD 2
-#define FS_LITTLEFS 3
-#define FS_FATFS 4
+
+// Include specific file systems
+#include <SPIFFS.h>
+#include <SD.h>
+#include <LittleFS.h>
+#include <FFat.h>
 
 #define EN_DEBUG
 #define DEBUG_SERIAL Serial
@@ -67,38 +73,32 @@
 
 class ESPWebFileManager {
 public:
-    // Constructor for SPIFFS, FATFS, or LittleFS (only one variable needed)
-    ESPWebFileManager(int fsType, bool formatOnFailFlag);
+    enum FileSystemType { FS_UNKNOWN, FS_SD_CARD, FS_SPIFFS, FS_LITTLEFS, FS_FATFS };
 
-    // Constructor for SD card with SPI pin remapping and arguments
-    ESPWebFileManager(int fsType, bool formatOnFailFlag, bool SPIreconfig, int csPin = -1, int mosi = -1, int miso = -1, int sck = -1);
-
-    // Public function to initialize the file system
-    bool begin();
-
-    String sanitizePath(const String& path);
-
-    void setServer(AsyncWebServer *server);
-
-    void listDir(const char *dirname, uint8_t levels);
-    
-    int getFsType();
 private:
     FS *current_fs = nullptr;
     bool memory_ready = false;
     String str_data = "";
     AsyncWebServer *_server = nullptr;
-    //FileSystemType fs_type = FS_UNKNOWN;
-    int _fsType;          // File system type
-    bool _formatOnFailFlag;       // Common flag
-    bool _SPIreconfig;      // Extra flag to remap SPI pins for SD Card
-    int _args[4];         // CS pin, MOSI, MISO, and SCK for SD card
+    FileSystemType fs_type = FS_UNKNOWN;
 
-    int _csPin;           // Temporary CS pin variable
+public:
+    ESPWebFileManager();
+    ~ESPWebFileManager();
 
-    bool initFileSystem(fs::FS &fs, const char *fsName, std::function<bool()> beginFn, std::function<bool()> formatFn);
+    bool initFileSystem(FileSystemType fsType, bool formatOnFail = false);
+    String sanitizePath(const String& path);
 
-    bool initSD();
+    void setServer(AsyncWebServer *server);
+
+    // Utility functions
+    void listDir(const char *dirname, uint8_t levels);
+
+private:
+    bool initSDCard(bool formatOnFail);
+    bool initSPIFFS(bool formatOnFail);
+    bool initLittleFS(bool formatOnFail);
+    bool initFATfs(bool formatOnFail);
 };
 
 #endif
