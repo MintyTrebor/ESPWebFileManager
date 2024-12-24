@@ -1,6 +1,6 @@
 # ESPWebFileManager
 
-#modded to accomodate iframe use case for a specific project - please use the authors orginal repo (https://github.com/jobitjoseph/ESPWebFileManager) for other use cases.
+# Modded to accomodate iframe use case for a specific project - please use the authors orginal repo (https://github.com/jobitjoseph/ESPWebFileManager) for other use cases.
 
 ## License
 
