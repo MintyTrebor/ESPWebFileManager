@@ -1,7 +1,14 @@
 # ESPWebFileManager
 
 ### Modded to accomodate iframe use case for a specific project - please use the authors orginal repo for other use cases.  
-(https://github.com/jobitjoseph/ESPWebFileManager)
+(https://github.com/jobitjoseph/ESPWebFileManager)  
+
+
+
+Download this repo and extract contents to arduino-ide `libraries` folder, then rename folder to `ESPWebFileManager`.
+  
+  
+  
 
 ## License
 
